@@ -95,6 +95,8 @@ if (null !== form_config_element) {
                     // Get the current form id.
                     let form_id_data = form.id.split('_');
                     form_id = form_id_data[1];
+                } else if (form.className.includes('elementor-form')) {
+                    form_id = form.querySelector("[name='form_id']").value;
                 }
 
                 // Get form settings based on id.
@@ -108,4 +110,6 @@ if (null !== form_config_element) {
         });
     });
 }
+
+
 
