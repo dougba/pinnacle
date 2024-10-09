@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Mike - Pinnacle Logistics</title>
+	<atom:link href="/author/mike/feed/" rel="self" type="application/rss+xml" />
+	<link>/</link>
+	<description>Complex Transportation Made Simple</description>
+	<lastBuildDate>Wed, 09 Oct 2024 16:48:15 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.6.2</generator>
+
+<image>
+	<url>/wp-content/uploads/2023/10/cropped-color-logo-no-background-mountain-only-1051x550-1-32x32.png</url>
+	<title>Mike - Pinnacle Logistics</title>
+	<link>/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+</channel>
+</rss>
