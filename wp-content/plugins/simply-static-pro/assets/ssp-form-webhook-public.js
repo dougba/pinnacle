@@ -30,6 +30,11 @@ if (null !== form_config_element) {
 
             // Pass the header to the request.
             requestData.headers = headers;
+        } else {
+            // Set default headers.
+            requestData.headers = {
+                'Accept': 'application/json',
+            };
         }
 
         // Send data via fetch to URL
@@ -87,32 +92,46 @@ if (null !== form_config_element) {
             // Get the current form element.
             let form = document.getElementById(settings.form_id);
 
+            // Check if Elementor form.
+            let inputs = document.getElementsByTagName('input');
+
+            for (let i = 0; i < inputs.length; i++) {
+                if (inputs[i].value === settings.form_id) {
+                    form = inputs[i].parentNode;
+                }
+            }
+
             // Adjust the form output depending on the plugin.
             let spinner;
 
             switch (settings.form_plugin) {
                 case 'cf7':
                     spinner = document.querySelector('.wpcf7-spinner');
-                    spinner.style.display = 'none';
+
+                    if (spinner) {
+                        spinner.style.display = 'none';
+                    }
                     break;
                 case 'elementor_forms':
                     spinner = document.querySelector('.elementor-message');
-                    spinner.style.display = 'none';
 
-                    // Find the form element.
-                    for (input in document.getElementsByTagName('input')) {
-                        if (input.value === settings.form_id) {
-                            form = input.parentNode;
-                        }
+                    if (spinner) {
+                        spinner.style.display = 'none';
                     }
                     break;
                 case 'bricks_forms':
                     spinner = document.querySelector('.loading');
-                    spinner.style.display = 'none';
+
+                    if (spinner) {
+                        spinner.style.display = 'none';
+                    }
                     break;
                 case 'gravity_forms':
                     spinner = document.querySelector('.gform-loader');
-                    spinner.style.display = 'none';
+
+                    if (spinner) {
+                        spinner.style.display = 'none';
+                    }
                     break;
             }
 
