@@ -16,25 +16,32 @@ if (null !== form_config_element) {
 
         // Maybe add custom header.
         if (settings.form_custom_headers) {
-            // Split arguments by ,
-            let headersData = settings.form_custom_headers.split(',');
-            let headers = {};
+            // Parse if multiple headers are present.
+            if( settings.form_custom_headers.includes(',') ) {
+                // Split arguments by ,
+                let headersData = settings.form_custom_headers.split(',');
+                let headers = {};
 
-            // Build the headers object.
-            headersData.forEach((header) => {
+                // Build the headers object.
+                headersData.forEach((header) => {
+                    // Split header by :
+                    let header_parts = header.split(':');
+                    // Add header to request
+                    headers[header_parts[0]] = header_parts[1];
+                });
+
+                // Pass the header to the request.
+                requestData.headers = headers;
+            } else {
                 // Split header by :
-                let header_parts = header.split(':');
+                let header_parts = settings.form_custom_headers.split(':');
                 // Add header to request
-                headers[header_parts[0]] = header_parts[1];
-            });
-
-            // Pass the header to the request.
-            requestData.headers = headers;
+                requestData.headers = {
+                    [header_parts[0]]: header_parts[1]
+                };
+            }
         } else {
-            // Set default headers.
-            requestData.headers = {
-                'Accept': 'application/json',
-            };
+
         }
 
         // Send data via fetch to URL
@@ -61,8 +68,6 @@ if (null !== form_config_element) {
             })
             .then(json => {
                 let settings = json.find(x => x.form_id === form_id);
-
-                console.log(settings);
 
                 if (settings) {
                     let data = new FormData(form);
@@ -93,11 +98,13 @@ if (null !== form_config_element) {
             let form = document.getElementById(settings.form_id);
 
             // Check if Elementor form.
-            let inputs = document.getElementsByTagName('input');
+            if (settings.form_plugin === 'elementor_forms') {
+                let inputs = document.getElementsByTagName('input');
 
-            for (let i = 0; i < inputs.length; i++) {
-                if (inputs[i].value === settings.form_id) {
-                    form = inputs[i].parentNode;
+                for (let i = 0; i < inputs.length; i++) {
+                    if (inputs[i].value === settings.form_id) {
+                        form = inputs[i].parentNode;
+                    }
                 }
             }
 
@@ -168,6 +175,18 @@ if (null !== form_config_element) {
                     input.required = true;
                 }
             });
+
+            // Prevent Gravity Forms from submitting without submit event.
+            if (typeof gform != "undefined") {
+                gform.utils.addAsyncFilter('gform/submission/pre_submission', async (data) => {
+                    data.abort = true;
+
+                    // Trigger submit event
+                    form.dispatchEvent(new Event('submit'));
+
+                    return data;
+                });
+            }
 
             form.addEventListener("submit", function (el) {
                 el.preventDefault();
