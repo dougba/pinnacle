@@ -17,7 +17,7 @@ if (null !== form_config_element) {
         // Maybe add custom header.
         if (settings.form_custom_headers) {
             // Parse if multiple headers are present.
-            if( settings.form_custom_headers.includes(',') ) {
+            if (settings.form_custom_headers.includes(',')) {
                 // Split arguments by ,
                 let headersData = settings.form_custom_headers.split(',');
                 let headers = {};
@@ -46,14 +46,20 @@ if (null !== form_config_element) {
 
         // Send data via fetch to URL
         fetch(url, requestData).then(response => {
-            if (response.ok) {
-                handleMessage(settings);
+            // If settings.form_webhook does not include static-studio, handle message
+            if (!settings.form_webhook.includes('static-studio')) {
+                if (response.ok) {
+                    handleMessage(settings);
+                }
             }
+
         }).catch(error => {
-            if (error.message.includes('Failed to fetch')) {
-                handleMessage(settings, false);
-            } else {
-                handleMessage(settings, true);
+            if (!settings.form_webhook.includes('static-studio')) {
+                if (error.message.includes('Failed to fetch')) {
+                    handleMessage(settings, false);
+                } else {
+                    handleMessage(settings, true);
+                }
             }
         });
     }
