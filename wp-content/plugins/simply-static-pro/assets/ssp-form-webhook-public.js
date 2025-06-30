@@ -40,26 +40,18 @@ if (null !== form_config_element) {
                     [header_parts[0]]: header_parts[1]
                 };
             }
-        } else {
-
         }
 
         // Send data via fetch to URL
         fetch(url, requestData).then(response => {
-            // If settings.form_webhook does not include static-studio, handle message
-            if (!settings.form_webhook.includes('static-studio')) {
-                if (response.ok) {
-                    handleMessage(settings);
-                }
+            if (response.ok) {
+                handleMessage(settings);
             }
-
         }).catch(error => {
-            if (!settings.form_webhook.includes('static-studio')) {
-                if (error.message.includes('Failed to fetch')) {
-                    handleMessage(settings, false);
-                } else {
-                    handleMessage(settings, true);
-                }
+            if (error.message.includes('Failed to fetch')) {
+                handleMessage(settings, false);
+            } else {
+                handleMessage(settings, true);
             }
         });
     }
@@ -88,7 +80,7 @@ if (null !== form_config_element) {
     function handleMessage(settings, error = false) {
         if (settings.form_use_redirect) {
             window.location.replace(settings.form_redirect_url);
-        } else {
+        } else if (!settings.form_disable_feedback) {
             // Set up success message.
             const message = document.createElement('div');
 
