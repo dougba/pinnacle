@@ -831,6 +831,34 @@ justify-content:center;
 }
 .delay {
 }
+.toggle-1635 {
+}
+
+                .toggle-1635 .oxy-expand-collapse-icon {
+            font-size: 16px;        }
+        
+                .toggle-1635 .oxy-expand-collapse-icon::before,
+        .toggle-1635 .oxy-expand-collapse-icon::after {
+            background-color: #000000;        }
+        
+        .toggle-1635-expanded {
+}
+.toggle-1480 {
+}
+
+                .toggle-1480 .oxy-expand-collapse-icon {
+            font-size: 16px;        }
+        
+                .toggle-1480 .oxy-expand-collapse-icon::before,
+        .toggle-1480 .oxy-expand-collapse-icon::after {
+            background-color: #000000;        }
+        
+        .toggle-1480-expanded {
+}
+.toggle-2100 {
+}
+.toggle-2100-expanded {
+}
 #menu-main{
  display:flex;
  gap:40px;
