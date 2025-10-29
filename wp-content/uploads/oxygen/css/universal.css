@@ -859,6 +859,18 @@ justify-content:center;
 }
 .toggle-2100-expanded {
 }
+.toggle-1299 {
+}
+
+                .toggle-1299 .oxy-expand-collapse-icon {
+            font-size: 20px;        }
+        
+                .toggle-1299 .oxy-expand-collapse-icon::before,
+        .toggle-1299 .oxy-expand-collapse-icon::after {
+            background-color: #000000;        }
+        
+        .toggle-1299-expanded {
+}
 #menu-main{
  display:flex;
  gap:40px;
