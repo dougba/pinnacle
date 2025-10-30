@@ -580,6 +580,50 @@ padding-left: 20px;
 }
 }
 
+.atomic-team-1-column {
+ border-top-style:none;
+ border-right-style:none;
+ border-bottom-style:none;
+ border-left-style:none;
+ border-top-width:6px;
+ border-right-width:6px;
+ border-bottom-width:6px;
+ border-left-width:6px;
+ border-top-color:#eff4fb;
+ border-right-color:#eff4fb;
+ border-bottom-color:#eff4fb;
+ border-left-color:#eff4fb;
+ gap:20px;
+}
+.atomic-team-1-column:not(.ct-section):not(.oxy-easy-posts),
+.atomic-team-1-column.oxy-easy-posts .oxy-posts,
+.atomic-team-1-column.ct-section .ct-section-inner-wrap{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:20px;
+}
+.atomic-team-1-mate {
+}
+.atomic-team-1-title {
+ font-family:'Inter Tight';
+ line-height:1.2;
+ font-size:22px;
+ font-weight:600;
+ margin-bottom:4px;
+ color:#000000;
+ -webkit-font-smoothing:antialiased;
+-moz-osx-font-smoothing:grayscale; text-transform:none;
+}
+.atomic-team-1-text {
+ font-family:'Inter';
+ font-size:16px;
+ line-height:1.6;
+ -webkit-font-smoothing:antialiased;
+-moz-osx-font-smoothing:grayscale; font-weight:400;
+ color:#666666;
+ text-align:center;
+}
 .atomic-iconblock-15-wrapper {
  width:100%;
  background-color:#ffffff;
@@ -870,6 +914,13 @@ justify-content:center;
             background-color: #000000;        }
         
         .toggle-1299-expanded {
+}
+.normal-text-inter {
+ font-family:'Inter';
+ color:#000000;
+ font-size:18px;
+ font-weight:400;
+ line-height:1.5;
 }
 #menu-main{
  display:flex;
