@@ -922,6 +922,9 @@ justify-content:center;
  font-weight:400;
  line-height:1.5;
 }
+.contact-form {
+ font-family:Inter;
+}
 #menu-main{
  display:flex;
  gap:40px;
