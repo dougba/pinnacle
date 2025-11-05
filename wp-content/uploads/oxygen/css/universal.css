@@ -917,13 +917,29 @@ justify-content:center;
 }
 .normal-text-inter {
  font-family:'Inter';
- color:#000000;
+ color:#525252;
  font-size:18px;
  font-weight:400;
  line-height:1.5;
 }
 .contact-form {
  font-family:Inter;
+}
+.block_icon-text {
+ gap:12px;
+}
+.block_icon-text:not(.ct-section):not(.oxy-easy-posts),
+.block_icon-text.oxy-easy-posts .oxy-posts,
+.block_icon-text.ct-section .ct-section-inner-wrap{
+display:flex;
+flex-direction:row;
+gap:12px;
+}
+.normal-text-inter-16 {
+ font-family:Inter;
+ font-size:16px;
+ line-height:1.35;
+ color:#525252;
 }
 #menu-main{
  display:flex;
