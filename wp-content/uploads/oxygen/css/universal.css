@@ -830,8 +830,12 @@ border: 1px solid #cbb26a;
 background-color :#f4f4f4;
 border: 1px solid #f4f4f4;
 color: #000000;
+padding: 12px 19.2px;
 }.cta-btn-white {
+ font-family:Inter;
  button-hover_color:#cbb26a;
+ font-size:16px;
+ font-weight:700;
 }
 @media (max-width: 479px) {
 .cta-btn-white {
