@@ -634,10 +634,10 @@ gap:20px;
 .atomic-team-1-mate {
 }
 .atomic-team-1-title {
- font-family:'Inter Tight';
+ font-family:Host Grotesk;
  line-height:1.2;
- font-size:22px;
- font-weight:600;
+ font-size:24px;
+ font-weight:500;
  margin-bottom:4px;
  color:#000000;
  -webkit-font-smoothing:antialiased;
@@ -1044,6 +1044,20 @@ padding: 12px 19.2px;
             background-color: #000000;        }
         
         .toggle-4860-expanded {
+}
+.h3-left-align {
+ font-weight:500;
+}
+.h2-center-align {
+ font-family:Host Grotesk;
+}
+.h3-left-black {
+ font-family:Host Grotesk;
+ color:#000000;
+ font-size:30px;
+ font-weight:500;
+ line-height:1.2;
+ text-align:left;
 }
 #menu-main{
  display:flex;
