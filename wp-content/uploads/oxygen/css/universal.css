@@ -827,8 +827,8 @@ justify-content:flex-start;
  font-weight:400;
 }
 .cta-btn:hover{
-background-color :#cbb26a;
-border: 1px solid #cbb26a;
+background-color :#fbcc00;
+border: 1px solid #fbcc00;
 }.cta-btn:hover{
 }
 .cta-btn {
@@ -837,11 +837,11 @@ border: 1px solid #fbcc00;
 color: #000000;
 padding: 12px 19.2px;
 }.cta-btn {
- font-family:'Inter';
- font-size:16px;
+ font-family:Host Grotesk;
+ font-size:18px;
  font-weight:700;
  min-width:180px;
- button-hover_color:#cbb26a;
+ button-hover_color:#fbcc00;
 }
 @media (max-width: 479px) {
 .cta-btn {
@@ -860,8 +860,8 @@ border: 1px solid #ffffff;
 color: #000000;
 padding: 12px 19.2px;
 }.cta-btn-white {
- font-family:Inter;
- font-size:16px;
+ font-family:Host Grotesk;
+ font-size:18px;
  font-weight:700;
  button-hover_color:#fbcc00;
 }
@@ -949,13 +949,13 @@ justify-content:center;
         .toggle-1299-expanded {
 }
 .normal-text-inter {
- font-family:Inter;
+ font-family:Neue-Haas-Grotesk;
  color:#525252;
  font-size:18px;
  text-align:left;
 }
 .contact-form {
- font-family:Inter;
+ font-family:Neue-Haas-Grotesk;
 }
 .block_icon-text {
  gap:12px;
@@ -968,13 +968,13 @@ flex-direction:row;
 gap:12px;
 }
 .normal-text-inter-16 {
- font-family:Inter;
+ font-family:Neue-Haas-Grotesk;
  font-size:16px;
  line-height:1.5;
  color:#525252;
 }
 .normal-text-inter-center {
- font-family:Inter;
+ font-family:Neue-Haas-Grotesk;
  color:#525252;
  font-size:18px;
  text-align:center;
@@ -989,7 +989,7 @@ gap:12px;
  color:#fbcc00;
 }
 .link_subpage-nav {
- font-family:Inter;
+ font-family:Neue-Haas-Grotesk;
  color:#ffffff;
  font-size:14px;
  font-weight:400;
@@ -1024,7 +1024,7 @@ border: 1px solid #000000;
 color: #ffffff;
 padding: 12px 19.2px;
 }.cta-btn-black {
- font-family:Inter;
+ font-family:Neue-Haas-Grotesk;
  button-hover_color:rgba(0,0,0,0.75);
  font-size:16px;
  font-weight:700;
