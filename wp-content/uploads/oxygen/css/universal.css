@@ -1193,6 +1193,45 @@ padding: 12px 19.2px;
  line-height:1.2;
  text-align:left;
 }
+.masonry-grid {
+ width:100%;
+}
+.masonry-item {
+ overflow:hidden;
+ border-radius:10px;
+ border-top-style:solid;
+ border-right-style:solid;
+ border-bottom-style:solid;
+ border-left-style:solid;
+ border-top-width:1px;
+ border-right-width:1px;
+ border-bottom-width:1px;
+ border-left-width:1px;
+ border-top-color:rgba(0,0,0,0.19);
+ border-right-color:rgba(0,0,0,0.19);
+ border-bottom-color:rgba(0,0,0,0.19);
+ border-left-color:rgba(0,0,0,0.19);
+ background-color:#ffffff;
+ margin-bottom:var(--gap) ;
+break-inside: avoid;
+}
+.masonry-container {
+ width:100%;
+--gap:1.5rem; display: block; columns: 300px 3; gap: var(--gap)
+}
+.masonry-content-wrap {
+ padding-top:20px;
+ padding-left:20px;
+ padding-right:20px;
+ padding-bottom:20px;
+}
+.masonry-text {
+ font-family:Neue-Haas-Grotesk;
+ font-size:16px;
+ color:#525252;
+}
+.masonry-image {
+}
 #menu-main{
  display:flex;
  gap:40px;
