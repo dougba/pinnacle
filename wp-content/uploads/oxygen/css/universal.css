@@ -488,6 +488,30 @@ padding-left: 20px;
 					margin: 0 !important;
 				}
 			}
+.oxel_horizontal_divider {
+ margin-top:16px;
+ margin-bottom:16px;
+ width:100%;
+}
+.oxel_horizontal_divider:not(.ct-section):not(.oxy-easy-posts),
+.oxel_horizontal_divider.oxy-easy-posts .oxy-posts,
+.oxel_horizontal_divider.ct-section .ct-section-inner-wrap{
+flex-direction:unset;
+}
+.oxel_horizontal_divider__line {
+ height:1px;
+ background-color:#fbcc00;
+}
+.oxel_horizontal_divider__icon {
+color: #98a1a8;}.oxel_horizontal_divider__icon 
+>svg {width: 16px;height: 16px;}.oxel_horizontal_divider__icon {
+flex-shrink: 0;
+}
+.oxel_horizontal_divider__icon:not(.ct-section):not(.oxy-easy-posts),
+.oxel_horizontal_divider__icon.oxy-easy-posts .oxy-posts,
+.oxel_horizontal_divider__icon.ct-section .ct-section-inner-wrap{
+display:flex;
+}
 .oxel_accordion {
  border-top-color:#adb4b9;
  border-right-color:#adb4b9;
@@ -596,30 +620,6 @@ display:flex;
  color:#000000;
  font-weight:500;
  width:NaNpx;
-}
-.oxel_horizontal_divider {
- margin-top:16px;
- margin-bottom:16px;
- width:100%;
-}
-.oxel_horizontal_divider:not(.ct-section):not(.oxy-easy-posts),
-.oxel_horizontal_divider.oxy-easy-posts .oxy-posts,
-.oxel_horizontal_divider.ct-section .ct-section-inner-wrap{
-flex-direction:unset;
-}
-.oxel_horizontal_divider__line {
- height:1px;
- background-color:rgba(0,0,0,0.3);
-}
-.oxel_horizontal_divider__icon {
-color: #98a1a8;}.oxel_horizontal_divider__icon 
->svg {width: 16px;height: 16px;}.oxel_horizontal_divider__icon {
-flex-shrink: 0;
-}
-.oxel_horizontal_divider__icon:not(.ct-section):not(.oxy-easy-posts),
-.oxel_horizontal_divider__icon.oxy-easy-posts .oxy-posts,
-.oxel_horizontal_divider__icon.ct-section .ct-section-inner-wrap{
-display:flex;
 }
 .atomic-subheading {
  font-family:Montserrat;
@@ -755,6 +755,7 @@ display:flex;
  border-bottom-color:#eff4fb;
  border-left-color:#eff4fb;
  gap:20px;
+ width:100%;
 }
 .atomic-team-1-column:not(.ct-section):not(.oxy-easy-posts),
 .atomic-team-1-column.oxy-easy-posts .oxy-posts,
@@ -769,7 +770,7 @@ gap:20px;
 .atomic-team-1-title {
  font-family:Host Grotesk;
  line-height:1.2;
- font-size:24px;
+ font-size:30px;
  font-weight:500;
  margin-bottom:4px;
  color:#000000;
@@ -777,13 +778,13 @@ gap:20px;
 -moz-osx-font-smoothing:grayscale; text-transform:none;
 }
 .atomic-team-1-text {
- font-family:'Inter';
- font-size:16px;
+ font-family:Neue-Haas-Grotesk;
+ font-size:18px;
  line-height:1.6;
  -webkit-font-smoothing:antialiased;
 -moz-osx-font-smoothing:grayscale; font-weight:400;
- color:#666666;
- text-align:center;
+ color:#525252;
+ text-align:left;
 }
 .atomic-iconblock-15-wrapper {
  width:100%;
