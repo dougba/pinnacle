@@ -1379,6 +1379,11 @@ padding: 12px 19.2px;
  font-size:16px;
  font-weight:700;
 }
+.cta-btn-black:not(.ct-section):not(.oxy-easy-posts),
+.cta-btn-black.oxy-easy-posts .oxy-posts,
+.cta-btn-black.ct-section .ct-section-inner-wrap{
+display:none;
+}
 .toggle-5444 {
 }
 .toggle-5444-expanded {
