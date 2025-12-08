@@ -779,11 +779,11 @@ gap:20px;
 }
 .atomic-team-1-text {
  font-family:Neue-Haas-Grotesk;
- font-size:18px;
+ font-size:14px;
  line-height:1.6;
  -webkit-font-smoothing:antialiased;
 -moz-osx-font-smoothing:grayscale; font-weight:400;
- color:#525252;
+ color:#999999;
  text-align:left;
 }
 .atomic-iconblock-15-wrapper {
