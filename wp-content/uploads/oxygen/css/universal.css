@@ -1500,6 +1500,16 @@ break-inside: avoid;
 }
 .masonry-image {
 }
+.oxy-close-modal {
+background-color: transparent;
+border: 1px solid #000000;
+color: #000000;
+padding: 11px 18.2px;
+}.oxy-close-modal {
+ font-family:Host Grotesk;
+ font-size:16px;
+ font-weight:500;
+}
 #menu-main{
  display:flex;
  gap:40px;
