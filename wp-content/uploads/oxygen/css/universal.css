@@ -458,7 +458,7 @@ text-align:left;
                 .ct-section-inner-wrap, .oxy-header-container{
   max-width: 1240px;
 }
-body {font-family: 'Neue-Haas-Grotesk';}body {line-height: 1.6;font-size: 16px;font-weight: 400;color: #404040;}.oxy-nav-menu-hamburger-line {background-color: #404040;}h1, h2, h3, h4, h5, h6 {font-family: 'Host Grotesk';font-size: 36px;font-weight: 700;}h2, h3, h4, h5, h6{font-size: 30px;}h3, h4, h5, h6{font-size: 24px;}h4, h5, h6{font-size: 20px;}h5, h6{font-size: 18px;}h6{font-size: 16px;}a {color: #0074db;text-decoration: none;}a:hover {text-decoration: none;}.ct-link-text {text-decoration: ;}.ct-link {text-decoration: ;}.ct-link-button {border-radius: 3px;}.ct-section-inner-wrap {
+body {font-family: 'Neue-Haas-Grotesk';}body {line-height: 1.6;font-size: 16px;font-weight: 400;color: #404040;}.oxy-nav-menu-hamburger-line {background-color: #404040;}h1, h2, h3, h4, h5, h6 {font-family: 'Host Grotesk';font-size: 36px;font-weight: 700;}h2, h3, h4, h5, h6{font-size: 30px;}h3, h4, h5, h6{font-size: 24px;}h4, h5, h6{font-size: 20px;}h5, h6{font-size: 18px;}h6{font-size: 16px;}a {color: #0074db;text-decoration: none;}a:hover {text-decoration: none;}.ct-link-text {text-decoration: ;}.ct-link {text-decoration: ;}.ct-link-button {border-radius: 6px;}.ct-section-inner-wrap {
 padding-top: 75px;
 padding-right: 20px;
 padding-bottom: 75px;
@@ -1246,9 +1246,6 @@ padding: 12px 19.2px;
 }
 
 .cta-btn-white:hover{
-background-color :#fbcc00;
-border: 1px solid #fbcc00;
-}.cta-btn-white:hover{
 }
 .cta-btn-white {
 background-color :#ffffff;
@@ -1257,9 +1254,8 @@ color: #000000;
 padding: 12px 19.2px;
 }.cta-btn-white {
  font-family:Host Grotesk;
- font-size:15px;
+ font-size:18px;
  font-weight:700;
- button-hover_color:#fbcc00;
 }
 @media (max-width: 479px) {
 .cta-btn-white {
@@ -1346,10 +1342,11 @@ justify-content:center;
 }
 .normal-text-inter {
  font-family:Neue-Haas-Grotesk;
- color:#525252;
+ color:#000000;
  font-size:18px;
  text-align:left;
- line-height:1.2;
+ line-height:1.5;
+ font-weight:400;
 }
 .contact-form {
  font-family:Neue-Haas-Grotesk;
