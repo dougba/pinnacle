@@ -1529,6 +1529,12 @@ display:flex;
         
         .toggle-6210-expanded {
 }
+.carousel-builder-test {
+}
+.carousel-builder-test .oxy-carousel-builder_gallery-image img, .carousel-builder-test .oxy-carousel-builder_gallery-images{
+height:60px;
+}
+
 #menu-main{
  display:flex;
  gap:40px;
