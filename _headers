@@ -1,5 +1,4 @@
 https://www.pinnacleteam.com/*
-Content-Security-Policy: default-src 'self'; 
 
  X-Frame-Options: DENY
  X-Content-Type-Options: nosniff
