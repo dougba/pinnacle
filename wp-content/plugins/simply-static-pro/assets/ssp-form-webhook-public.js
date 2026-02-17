@@ -189,9 +189,12 @@ if (null !== form_config_element) {
                     // If Cloudflare Turnstile is active on this form, route through our WP REST proxy
                     // using the origin REST base provided in forms.json (not rewritten during export).
                     var hasTurnstile = !!form.querySelector('.cf-turnstile');
+                    // Check for Google reCAPTCHA v3 (hidden input with class g-recaptcha-response)
+                    var recaptchaInput = form.querySelector('input.g-recaptcha-response[data-sitekey]');
+                    var hasRecaptcha = !!recaptchaInput;
                     var restBase = '';
                     // Prefer rest_base from forms.json (origin URL is not rewritten by Simply Static)
-                    if (hasTurnstile && settings.rest_base && typeof settings.rest_base === 'string') {
+                    if ((hasTurnstile || hasRecaptcha) && settings.rest_base && typeof settings.rest_base === 'string') {
                         restBase = settings.rest_base;
                     }
                     var targetUrl = settings.form_webhook;
@@ -202,9 +205,28 @@ if (null !== form_config_element) {
                             if (restBase.slice(-1) !== '/') { restBase = restBase + '/'; }
                         } catch(e) { /* noop */ }
                         targetUrl = restBase + 'simplystatic/v1/turnstile/submit?forward_to=' + encodeURIComponent(settings.form_webhook);
+                        submitForm(targetUrl, settings, data, form);
+                    } else if (hasRecaptcha && restBase && typeof targetUrl === 'string' && targetUrl && typeof grecaptcha !== 'undefined') {
+                        // Google reCAPTCHA v3: execute and get token before submitting
+                        var siteKey = recaptchaInput.getAttribute('data-sitekey');
+                        try {
+                            if (restBase.slice(-1) !== '/') { restBase = restBase + '/'; }
+                        } catch(e) { /* noop */ }
+                        grecaptcha.ready(function() {
+                            grecaptcha.execute(siteKey, {action: 'submit'}).then(function(token) {
+                                // Set the token in the hidden input and form data
+                                recaptchaInput.value = token;
+                                data.set('g-recaptcha-response', token);
+                                var recaptchaTargetUrl = restBase + 'simplystatic/v1/recaptcha/submit?forward_to=' + encodeURIComponent(settings.form_webhook);
+                                submitForm(recaptchaTargetUrl, settings, data, form);
+                            }).catch(function(err) {
+                                console.error('[SSP] reCAPTCHA execute error:', err);
+                                handleMessage(settings, true, form);
+                            });
+                        });
+                    } else {
+                        submitForm(targetUrl, settings, data, form);
                     }
-
-                    submitForm(targetUrl, settings, data, form);
                 } else {
                     // If no settings found, show a clear inline message to assist debugging
                     const fallbackSettings = {
