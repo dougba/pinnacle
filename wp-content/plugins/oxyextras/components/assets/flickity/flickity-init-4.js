@@ -132,13 +132,63 @@ function oxygen_init_repeater_carousel($) {
             $triggeraos = $inner.data('trigger-aos'),
             $triggeraosDelay = $inner.data('trigger-aos-delay'),
             $resumeAutoplay = $inner.data('resume-autoplay'),
-            $hash = $inner.data('hash'); 
+            $hash = $inner.data('hash'),
+            $fixHiddenFocus = $inner.data('fix-hidden-focus'); 
 
+        // Accessibility fix: Prevent focus on hidden slides
+        function manageSlideFocus() {
+            if (true !== $fixHiddenFocus) return;
+            var flickity = $($carouselslider).data('flickity');
+            if (!flickity) return;
+            
+            // Find all focusable elements selector
+            var focusableSelector = 'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+            
+            flickity.slides.forEach(function(slide, i) {
+                var cell = slide.cells[0].element;
+                var isHidden = cell.getAttribute('aria-hidden') === 'true';
+                
+                // Check if the cell itself is focusable (e.g., an <a> tag)
+                if (cell.matches(focusableSelector)) {
+                    if (isHidden) {
+                        if (!cell.hasAttribute('data-oxy-carousel-tabindex')) {
+                            cell.setAttribute('data-oxy-carousel-tabindex', 'modified');
+                            cell.setAttribute('tabindex', '-1');
+                        }
+                    } else {
+                        if (cell.hasAttribute('data-oxy-carousel-tabindex')) {
+                            cell.removeAttribute('data-oxy-carousel-tabindex');
+                            cell.removeAttribute('tabindex');
+                        }
+                    }
+                }
+                
+                // Also check focusable elements inside the cell
+                var focusableElements = cell.querySelectorAll(focusableSelector);
+                
+                focusableElements.forEach(function(element) {
+                    if (isHidden) {
+                        // Hidden slide: disable focus and mark with data attribute
+                        if (!element.hasAttribute('data-oxy-carousel-tabindex')) {
+                            element.setAttribute('data-oxy-carousel-tabindex', 'modified');
+                            element.setAttribute('tabindex', '-1');
+                        }
+                    } else {
+                        // Visible slide: restore focus if we modified it
+                        if (element.hasAttribute('data-oxy-carousel-tabindex')) {
+                            element.removeAttribute('data-oxy-carousel-tabindex');
+                            element.removeAttribute('tabindex');
+                        }
+                    }
+                });
+            });
+        }
 
         $($carouselslider).on('ready.flickity', function(event, index) {
 
             setTimeout(function() {
                 disable_nav(); // disable navigation on ready, depending on which cell we're on.
+                manageSlideFocus(); // Fix accessibility on ready
             }, 0);
 
         }); 
@@ -208,6 +258,25 @@ function oxygen_init_repeater_carousel($) {
         
         var $flickityCarousel = $($carouselslider).flickity(options);
         
+        // Add change event handler for accessibility fix
+        $flickityCarousel.on('change.flickity', manageSlideFocus);
+        
+        // Add focusin handler to catch when user tabs into hidden slides
+        if (true === $fixHiddenFocus) {
+            $($carouselslider).on('focusin', function(e) {
+                var $target = $(e.target);
+                var $cell = $target.closest('.flickity-slider > *');
+                
+                // If focus landed on an element in an aria-hidden slide
+                if ($cell.length && $cell.attr('aria-hidden') === 'true') {
+                    // Remove focus from the hidden element
+                    e.target.blur();
+                    // Run manageSlideFocus to ensure all tabindex values are correct
+                    manageSlideFocus();
+                }
+            });
+        }
+        
         var currentCarousel;
 
         /* do prev/next */
@@ -252,6 +321,26 @@ function oxygen_init_repeater_carousel($) {
             
         });
 
+        // Keyboard navigation for prev/next buttons
+        $($next).off('keydown');
+        $($next).on('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if ($(this).attr('aria-disabled') !== 'true') {
+                    $(this).trigger('click');
+                }
+            }
+        });
+
+        $($prev).off('keydown');
+        $($prev).on('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if ($(this).attr('aria-disabled') !== 'true') {
+                    $(this).trigger('click');
+                }
+            }
+        });
 
         // Cells are clickable to select
         if (true === $inner.data('clickselect')) {
@@ -427,17 +516,17 @@ function oxygen_init_repeater_carousel($) {
                     var target = flickity.selectedCell.target;
                     
                     if (!flickity.slides[flickity.selectedIndex - 1] && !flickity.slides[flickity.selectedIndex + 1]) {
-                        $($prev).addClass('oxy-carousel-builder_icon_disabled');
-                        $($next).addClass('oxy-carousel-builder_icon_disabled');
+                        $($prev).addClass('oxy-carousel-builder_icon_disabled').attr('aria-disabled', 'true');
+                        $($next).addClass('oxy-carousel-builder_icon_disabled').attr('aria-disabled', 'true');
                     } else if (!flickity.slides[flickity.selectedIndex - 1]) {
-                        $($prev).addClass('oxy-carousel-builder_icon_disabled');
-                        $($next).removeClass('oxy-carousel-builder_icon_disabled');
+                        $($prev).addClass('oxy-carousel-builder_icon_disabled').attr('aria-disabled', 'true');
+                        $($next).removeClass('oxy-carousel-builder_icon_disabled').attr('aria-disabled', 'false');
                       } else if (!flickity.slides[flickity.selectedIndex + 1]) {
-                        $($next).addClass('oxy-carousel-builder_icon_disabled');
-                        $($prev).removeClass('oxy-carousel-builder_icon_disabled');
+                        $($next).addClass('oxy-carousel-builder_icon_disabled').attr('aria-disabled', 'true');
+                        $($prev).removeClass('oxy-carousel-builder_icon_disabled').attr('aria-disabled', 'false');
                       } else {
-                        $($prev).removeClass('oxy-carousel-builder_icon_disabled');
-                        $($next).removeClass('oxy-carousel-builder_icon_disabled');
+                        $($prev).removeClass('oxy-carousel-builder_icon_disabled').attr('aria-disabled', 'false');
+                        $($next).removeClass('oxy-carousel-builder_icon_disabled').attr('aria-disabled', 'false');
                       }
 
                 }
