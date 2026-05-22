@@ -44,6 +44,17 @@ function oxygen_init_repeater_carousel($) {
 	  }
       this.element.classList.add('flickity-resize');
     };
+    
+    // iOS Safari fix: Patch onresize to only trigger when width changes
+    var originalOnResize = Flickity.prototype.onresize;
+    Flickity.prototype.onresize = function() {
+      var currentWidth = this.element.offsetWidth;
+      
+      if (this._lastResizeWidth === undefined || currentWidth !== this._lastResizeWidth) {
+        this._lastResizeWidth = currentWidth;
+        originalOnResize.call(this);
+      }
+    };
 
     /* Fix for iOS15 */
 	;(function () {
