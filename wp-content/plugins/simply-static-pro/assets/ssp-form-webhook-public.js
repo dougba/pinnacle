@@ -652,8 +652,13 @@ if (!window.__sspTurnstileReady) {
             if (explicit) { label = explicit.textContent || ''; }
         }
         if (!label && control.closest('label')) { label = control.closest('label').textContent || ''; }
-        if (!label) { label = control.getAttribute('aria-label') || control.getAttribute('placeholder') || control.getAttribute('data-name') || ''; }
+        if (!label) {
+            var cf7Wrap = control.closest('.wpcf7-form-control-wrap');
+            label = control.getAttribute('aria-label') || control.getAttribute('placeholder') || control.getAttribute('data-name') ||
+                (cf7Wrap ? cf7Wrap.getAttribute('data-name') : '') || '';
+        }
         label = String(label).replace(/\*/g, '').replace(/\s+/g, ' ').trim();
+        if (/^[?\s]+$/.test(label)) { label = ''; }
         if (!label) { label = 'Field ' + index; }
         return label;
     }
@@ -668,6 +673,16 @@ if (!window.__sspTurnstileReady) {
             suffix++;
         }
         return name;
+    }
+
+    function getSyntheticFieldName(data, control, index) {
+        var cf7Wrap = control.closest('.wpcf7-form-control-wrap');
+        var cf7Name = cf7Wrap ? cf7Wrap.getAttribute('data-name') : '';
+        if (cf7Name && !data.has(cf7Name)) {
+            return cf7Name;
+        }
+
+        return uniqueFieldName(data, getControlLabel(control, index), index);
     }
 
     function addUnnamedFormControls(data, form) {
@@ -692,8 +707,7 @@ if (!window.__sspTurnstileReady) {
             }
             if (!value) { return; }
 
-            var label = getControlLabel(control, unnamedIndex);
-            data.set(uniqueFieldName(data, label, unnamedIndex), value);
+            data.set(getSyntheticFieldName(data, control, unnamedIndex), value);
             addedSyntheticFields = true;
             unnamedIndex++;
         });
