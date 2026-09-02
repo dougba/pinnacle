@@ -1,6 +1,26 @@
 (function(){
     'use strict';
 
+    function sspBuildConfigUrl(configPath, fileName, versionSuffix) {
+        let basePath = String(configPath || '/wp-content/uploads/simply-static/configs/').trim();
+
+        basePath = basePath.replace(/^(https?)\/\//i, '$1://');
+
+        if (!basePath.endsWith('/')) {
+            basePath += '/';
+        }
+
+        try {
+            return new URL(fileName + versionSuffix, new URL(basePath, window.location.origin + '/')).toString();
+        } catch (_) {
+            if (/^https?:\/\//i.test(basePath)) {
+                return basePath + fileName + versionSuffix;
+            }
+
+            return window.location.origin + (basePath.charAt(0) === '/' ? '' : '/') + basePath + fileName + versionSuffix;
+        }
+    }
+
     // Utility: create or return an error container for an input
     function getErrorEl(input){
         let el = input.closest('[data-ssp-field]') || input.parentElement;
@@ -42,6 +62,27 @@
         return (el.value || '').trim();
     }
 
+    function preparePatternCompatibility(input){
+        if(!input || !input.getAttribute) return;
+        const pattern = input.getAttribute('pattern');
+        if(!pattern) return;
+
+        // Modern HTML patterns use the stricter RegExp `v` flag. Older form
+        // builders commonly emitted character classes that remain meaningful
+        // under legacy JavaScript rules but are rejected by `v` (for example,
+        // an unescaped hyphen). Let our validator preserve those semantics
+        // without leaving a broken native constraint on the field.
+        try{ new RegExp('', 'v'); }catch(e){ return; }
+        try{ new RegExp('^(?:'+pattern+')$', 'v'); return; }catch(e){ /* legacy pattern */ }
+
+        try{
+            new RegExp('^(?:'+pattern+')$');
+            input.setAttribute('data-ssp-legacy-pattern', pattern);
+        }catch(e){ /* invalid patterns provide no native constraint */ }
+
+        input.removeAttribute('pattern');
+    }
+
     function validateField(input){
         // Skip disabled or hidden (display:none) fields except contenteditable
         if(input.disabled) return {valid:true};
@@ -75,9 +116,10 @@
         }
 
         // Pattern
-        if(!customMessage && input.pattern){
+        const fieldPattern = input.getAttribute && (input.getAttribute('data-ssp-legacy-pattern') || input.getAttribute('pattern'));
+        if(!customMessage && fieldPattern){
             try{
-                const re = new RegExp('^'+input.pattern+'$');
+                const re = new RegExp('^(?:'+fieldPattern+')$');
                 if(input.value && !re.test(input.value)){
                     customMessage = 'Please match the requested format.';
                 }
@@ -179,6 +221,7 @@
         const fields = form.querySelectorAll(inputSelector);
 
         fields.forEach(field => {
+            preparePatternCompatibility(field);
             const handler = () => validateField(field);
             field.addEventListener('blur', handler);
             field.addEventListener('input', handler);
@@ -300,7 +343,7 @@
             if(v){ version_suffix = '?ver=' + encodeURIComponent(v); }
         }
         const configPath = configMeta.getAttribute('content');
-        const configUrl = window.location.origin + configPath + 'forms.json' + version_suffix;
+        const configUrl = sspBuildConfigUrl(configPath, 'forms.json', version_suffix);
 
         function markWrappers(form){
             try{
