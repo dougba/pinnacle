@@ -1267,7 +1267,26 @@ if (!window.__sspTurnstileReady) {
             });
         });
 
-        return matches.length === 1 ? matches[0] : null;
+        if (matches.length <= 1) { return matches[0] || null; }
+
+        // Older versions could publish aliases for the same provider identity
+        // as separate connections (for example Gravity Forms `1` and
+        // `gform_1`). Prefer the one whose stored identifier exactly matches
+        // the form on the page. Exact duplicate configurations remain
+        // ambiguous and deliberately fail closed.
+        if (otherDomId) {
+            const exactDomMatches = matches.filter(cfg => stripHash(cfg.form_id) === otherDomId);
+            if (exactDomMatches.length > 1) { return null; }
+            if (exactDomMatches.length === 1) { return exactDomMatches[0]; }
+        }
+
+        for (const candidate of ids) {
+            const exactCandidateMatches = matches.filter(cfg => stripHash(cfg.form_id) === candidate);
+            if (exactCandidateMatches.length > 1) { return null; }
+            if (exactCandidateMatches.length === 1) { return exactCandidateMatches[0]; }
+        }
+
+        return null;
     }
 
     function sspTurnstileWidget(form) {
@@ -1305,6 +1324,43 @@ if (!window.__sspTurnstileReady) {
         var widgetId = widget && widget.dataset ? String(widget.dataset.sspWidgetId || '') : '';
         if (!widgetId || !window.turnstile || typeof window.turnstile.reset !== 'function') { return; }
         try { window.turnstile.reset(widgetId); } catch (e) {}
+    }
+
+    function sspRecaptchaV2Widget(form) {
+        if (!form || typeof form.querySelector !== 'function') { return null; }
+        var widget = form.querySelector('.ssp-g-recaptcha[data-sitekey]');
+        if (widget) { return widget; }
+        var wrapper = typeof form.closest === 'function'
+            ? (form.closest('.nf-form-cont') || form.closest('.ninja-forms-form-wrap'))
+            : null;
+        return wrapper ? wrapper.querySelector('.ssp-g-recaptcha[data-sitekey]') : null;
+    }
+
+    function applySspRecaptchaV2Token(data, form) {
+        var widget = sspRecaptchaV2Widget(form);
+        if (!(data instanceof FormData) || !widget) { return false; }
+        var token = '';
+        var widgetId = widget.dataset ? String(widget.dataset.sspWidgetId || '') : '';
+        if (widgetId && window.grecaptcha && typeof window.grecaptcha.getResponse === 'function') {
+            try { token = String(window.grecaptcha.getResponse(widgetId) || ''); } catch (e) {}
+        }
+        if (!token) {
+            var input = widget.querySelector('textarea[name="g-recaptcha-response"], input[name="g-recaptcha-response"]');
+            token = input ? String(input.value || '') : '';
+        }
+
+        // The page can still contain a provider-native widget while an older
+        // static export is being replaced. Submit only the SSP-managed token.
+        data.delete('g-recaptcha-response');
+        if (token) { data.set('g-recaptcha-response', token); }
+        return !!token;
+    }
+
+    function resetSspRecaptchaV2Widget(form) {
+        var widget = sspRecaptchaV2Widget(form);
+        var widgetId = widget && widget.dataset ? String(widget.dataset.sspWidgetId || '') : '';
+        if (!widgetId || !window.grecaptcha || typeof window.grecaptcha.reset !== 'function') { return; }
+        try { window.grecaptcha.reset(widgetId); } catch (e) {}
     }
 
     // Gravity Forms consent fields always serialize hidden copies of their
@@ -1382,6 +1438,10 @@ if (!window.__sspTurnstileReady) {
                 var hasTurnstile = !!sspTurnstileWidget(form);
                 var recaptchaInput = form.querySelector('input.ssp-g-recaptcha-response[data-sitekey]') || (form.closest('.nf-form-cont') && form.closest('.nf-form-cont').querySelector('input.ssp-g-recaptcha-response[data-sitekey]'));
                 var hasRecaptcha = !!recaptchaInput;
+                var recaptchaV2Widget = sspRecaptchaV2Widget(form);
+				var hasRecaptchaV2Token = recaptchaV2Widget
+					? applySspRecaptchaV2Token(data, form)
+					: !!form.querySelector('.elementor-g-recaptcha[data-sitekey], .g-recaptcha[data-sitekey]') && !!String(data.get('g-recaptcha-response') || '').trim();
                 var restBase = (settings.rest_base && typeof settings.rest_base === 'string') ? settings.rest_base : '';
                 if (restBase && restBase.slice(-1) !== '/') { restBase += '/'; }
                 var targetUrl = settings.form_webhook;
@@ -1408,7 +1468,8 @@ if (!window.__sspTurnstileReady) {
 				var requiredService = String(settings.form_captcha_service || 'turnstile');
 				var captchaUnavailable = requiredCaptcha && (
 					(requiredService === 'recaptcha_v3' && (!hasRecaptcha || typeof grecaptcha === 'undefined')) ||
-					(requiredService !== 'recaptcha_v3' && !hasTurnstile)
+					(requiredService === 'recaptcha_v2' && !hasRecaptchaV2Token) ||
+					(requiredService !== 'recaptcha_v2' && requiredService !== 'recaptcha_v3' && !hasTurnstile)
 				);
 				if (captchaUnavailable) {
 					var captchaErrorSettings = Object.assign({}, settings, {
@@ -1433,6 +1494,9 @@ if (!window.__sspTurnstileReady) {
                             return { success: false, settings: settings, form: form, error: error };
                         });
                     };
+					if (requiredService === 'recaptcha_v2') {
+						return submitQueuedData();
+					}
                     if (hasTurnstile) {
                         applySspTurnstileToken(data, form);
                         return submitQueuedData();
@@ -1455,7 +1519,9 @@ if (!window.__sspTurnstileReady) {
                     return submitQueuedData();
                 }
 
-                if (hasTurnstile && restBase && targetUrl) {
+				if (requiredService === 'recaptcha_v2' && restBase && targetUrl) {
+					return submitForm(restBase + 'simplystatic/v1/recaptcha/submit?forward_to=' + encodeURIComponent(targetUrl), settings, data, form);
+				} else if (hasTurnstile && restBase && targetUrl) {
                     applySspTurnstileToken(data, form);
                     return submitForm(restBase + 'simplystatic/v1/turnstile/submit?forward_to=' + encodeURIComponent(targetUrl), settings, data, form);
                 } else if (hasRecaptcha && restBase && targetUrl && typeof grecaptcha !== 'undefined') {
@@ -1489,6 +1555,7 @@ if (!window.__sspTurnstileReady) {
             var clearActiveSubmission = function () {
                 if (form.__sspSubmissionPromise === submissionPromise) {
                     resetSspTurnstileWidget(form);
+                    resetSspRecaptchaV2Widget(form);
                     form.__sspSubmitting = false;
                     form.__sspSubmissionPromise = null;
                 }
@@ -1616,6 +1683,58 @@ if (!window.__sspTurnstileReady) {
     // If Turnstile already loaded before the IIFE ran (async race), render now.
     if (window.__sspTurnstileLoaded && typeof turnstile !== 'undefined') {
         renderTurnstileWidgets();
+    }
+
+    // Explicit reCAPTCHA v2 rendering mirrors the Turnstile lifecycle and
+    // restores widgets removed by dynamically rendered Ninja/WS forms.
+    function renderRecaptchaV2Widgets() {
+        if (!window.grecaptcha || typeof window.grecaptcha.render !== 'function') return;
+
+        document.querySelectorAll('form').forEach(function (form) {
+            var placeholder = sspRecaptchaV2Widget(form);
+            if (!placeholder) {
+                var nfWrap = form.closest('.nf-form-cont') || form.closest('.ninja-forms-form-wrap');
+                var wsWrap = form.closest('.wsf-form') || form.closest('.ws-form');
+                if (nfWrap || wsWrap) {
+                    var existingWidget = document.querySelector('.ssp-g-recaptcha[data-sitekey]');
+                    var cfg = window.__SSP_RECAPTCHA_V2_CFG__ || {};
+                    var sitekey = existingWidget ? existingWidget.getAttribute('data-sitekey') : (cfg.sitekey || '');
+                    if (sitekey) {
+                        placeholder = document.createElement('div');
+                        placeholder.className = 'g-recaptcha ssp-g-recaptcha';
+                        placeholder.setAttribute('data-sitekey', sitekey);
+                        placeholder.style.marginTop = '15px';
+                        var submitBtn = form.querySelector('input[type="submit"], button[type="submit"]');
+                        if (submitBtn && submitBtn.parentNode) {
+                            submitBtn.parentNode.insertBefore(placeholder, submitBtn);
+                        } else {
+                            form.appendChild(placeholder);
+                        }
+                    }
+                }
+            }
+
+            if (placeholder && !placeholder.dataset.sspWidgetId) {
+                try {
+                    var widgetId = window.grecaptcha.render(placeholder, {
+                        sitekey: placeholder.getAttribute('data-sitekey')
+                    });
+                    placeholder.dataset.sspWidgetId = String(widgetId);
+                } catch (e) {
+                    delete placeholder.dataset.sspWidgetId;
+                    if (typeof console !== 'undefined') {
+                        console.warn('[SSP] reCAPTCHA v2 render error:', e.message || e);
+                    }
+                }
+            }
+        });
+    }
+
+    window.__sspRenderRecaptchaV2Widgets = renderRecaptchaV2Widgets;
+    window.__sspRecaptchaV2Ready = renderRecaptchaV2Widgets;
+
+    if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+        renderRecaptchaV2Widgets();
     }
 
     function initForms() {
@@ -1776,12 +1895,13 @@ if (!window.__sspTurnstileReady) {
         window.__SSP_WEBHOOK_RUNNING__ = true;
         initForms();
         renderTurnstileWidgets();
+        renderRecaptchaV2Widgets();
         populateFormsFromURL();
         if (typeof MutationObserver !== 'undefined') {
-            new MutationObserver(() => { initForms(); renderTurnstileWidgets(); }).observe(document.body, { childList: true, subtree: true });
+            new MutationObserver(() => { initForms(); renderTurnstileWidgets(); renderRecaptchaV2Widgets(); }).observe(document.body, { childList: true, subtree: true });
         }
         // Ninja Forms renders via Backbone after DOMContentLoaded; re-bind when its forms are ready.
-        document.addEventListener('nfFormReady', () => { initForms(); renderTurnstileWidgets(); });
+        document.addEventListener('nfFormReady', () => { initForms(); renderTurnstileWidgets(); renderRecaptchaV2Widgets(); });
         // GF fires gform_post_render after conditional logic is initialized;
         // re-run population so conditionally-shown fields get their values set.
         if (window.jQuery) {
